@@ -115,6 +115,22 @@ const deleteBlog = async function (req, res) {
         if (!blog) return res.status(404).send({ status: false, msg: "Blog does not exists" })
         if (data == true) return res.status(404).send({ status: false, msg: "blog document doesn't exists" })
         res.status(200).send({ msg: deleted })
+        //------------------------------------------Authorisation---------------------------------------------------------------//
+        let availableBlog = await blogModel.findById(blogId);     
+        let authorLoggedId = req.authorLoggedIn;
+        if (availableBlog.authorId != authorLoggedId) {
+            return res.status(403).send({ status: false, msg: "Unauthorized" })
+            
+        }
+//--------------------------------------------------------------------------------------------------------------------//
+        let deletedBlog = await blogModel.findOneAndUpdate({ _id: blogId, isDeleted: false },
+            {
+                $set: { isDeleted: true, deletedAt: new Date() }
+            }, { new: true })
+
+        return res.status(200).send({ status: true, data: deletedBlog });
+        
+        
     } catch (error) {
         res.status(500).send({ msg: error.message })
     }
