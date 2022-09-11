@@ -13,7 +13,7 @@ router.post("/blogs",validator.authenticate,blogController.createBlog);
 router.put("/updateBlogs/:blogId",validator.authenticate,blogController.updateBlogs);
 
 router.delete("/deleteBlog/:blogId",validator.authenticate,blogController.deleteBlog);
-router.delete("/deleteByQuery",validator.authenticate,validator.authorize,blogController.deleteByQuery);
+router.delete("/deleteByQuery",validator.authenticate,blogController.deleteByQuery);
 router.post("/loginAuthor",authorController.loginAuthor);
 
 module.exports = router;

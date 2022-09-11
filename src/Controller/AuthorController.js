@@ -1,6 +1,6 @@
 const authorModel = require('../model/authorModel.js');
 const validator = require('../validator/validator.js');
-const emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
+// const emailRegex = /^\w+([\.-]?\w+)@\w+([\.-]?\w+)(\.\w{2,3})+$/
 const jwt = require('jsonwebtoken');
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>Question-1>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
@@ -9,6 +9,26 @@ const createAuthor = async function (req, res) {
     try {
         let data = req.body;
         let { fname, lname, title, email, password } = data;
+        // let [firstname, lastname, Title, Email, Password ] = [ isValidfName(fname), isValidlName(lname), isValidTitle(title), isValidEmail(email), isValidPassword(password),];
+    
+    if (!validator.isValidfName) {
+      return res.status(400).send({ status: false, message: "Enter valid firstname" });
+    }
+    if (!validator.isValidlName ) {
+      return res.status(400).send({ status: false, message: "Enter valid lastname" });
+    }
+    if (!validator.isValidTitle ) {
+      return res.status(400).send({ status: false, message: "Enter valid title" });
+    }
+    if (!validator.isValidEmail ) {
+      return res.status(400).send({ status: false, message: "Enter valid email" });
+    }
+    if (!validator.isValidPassword ) {
+      return res.status(400).send({ status: false, message: "Enter valid password" });
+    }
+
+
+
         if(!validator.isValidRequestBody) {
             return res.status(400).send({ status: false, msg: "please provide data" })
         }
@@ -17,9 +37,6 @@ const createAuthor = async function (req, res) {
         }
         if (!email) {
             return res.status(400).send({ status: false, msg: "email is required" })
-        }
-        if (!emailRegex.test(email)) {
-            return res.status(400).send({ status: false, msg: " email should be valid" })
         }
 
         if (!password) {
@@ -40,6 +57,7 @@ const loginAuthor = async function (req, res) {
   try{
     let userName = req.body.email;
     let password = req.body.password;
+
   
     let user = await authorModel.findOne({ email: userName, password: password });
     if(!userName){
@@ -59,6 +77,11 @@ const loginAuthor = async function (req, res) {
         status: false,
         msg: "username or the password is not corerct",
       });
+      const isEmailAlreadyUsed = await authorModel.findOne({ email }); 
+
+    if (isEmailAlreadyUsed) {
+        return res.status(400).send({ status: false, message: `email address is already registered` })
+    }
   
     
     let token = jwt.sign(
