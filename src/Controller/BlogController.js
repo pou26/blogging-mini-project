@@ -67,7 +67,7 @@ const createBlog = async function (req, res) {
 const getBlog = async function (req, res) {
     try {
         const queries = req.query;
-        if (!validator.isValidRequestBody(queries)) {  
+        if (!validator.isValidRequestBody(queries)) {
 
             let data = await blogModel.find({ isDeleted: false, isPublished: true });
             if (data.length == 0) {
@@ -76,7 +76,7 @@ const getBlog = async function (req, res) {
                 return res.status(200).send({ status: true, msg: data });
             }
         } else {
-            let data1 = await blogModel.find({           
+            let data1 = await blogModel.find({
                 $or: [{ authorId: queries.authorId }, { category: queries.category },
                 { tags: queries.tags }, { subcategory: queries.subcategory }]
             }).find({ isDeleted: false, isPublished: true })
@@ -115,9 +115,12 @@ const updateBlogs = async function (req, res) {
         }
         //--------------------------------------------------------------------------------------------------------------------//
         let data = req.body;
+        if(!validator.isValidRequestBody(data)){
+            return res.status(400).send({status:false,msg:"Provide data for Updation."})
+        }
         let updatedBlog = await blogModel.findOneAndUpdate({ _id: blogId },
             {
-                $set: { isPublished: true, publishedAt: new Date() },
+                $set: { title:data.title,body:data.body,isPublished: true, publishedAt: new Date() },
                 $push: { tags: data.tags, subcategory: data.subcategory }
             }, { new: true })
 
@@ -146,6 +149,11 @@ const deleteBlog = async function (req, res) {
         //--------------------------------------------------------------------------------------------------------------------//
 
         if (blog.isDeleted == true) return res.status(404).send({ status: false, msg: "Blog document is already deleted" })
+        await blogModel.findOneAndUpdate({ _id: blogId },
+            {
+                $set: { isDeleted: true, deletedAt: new Date() }
+            }
+        )
         res.status(200).send({ msg: "Deleted" })
     } catch (error) {
         return res.status(500).send({ msg: error.message });
