@@ -4,11 +4,11 @@ const ObjectId = mongoose.Schema.Types.ObjectId
 const blogSchema = new mongoose.Schema({
     title: {
         type: String,
-        required: true
+        required: true,
     },
     body: {
         type: String,
-        required: true
+        required: true,
     },
     authorId: {
         type: ObjectId,
@@ -16,7 +16,7 @@ const blogSchema = new mongoose.Schema({
         ref: "Author",
     },
     tags: {
-        type: Array
+        type: Array,
     },
     category: {
         type: String,
@@ -27,17 +27,15 @@ const blogSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
-    deletedAt:{
-        type:Date
+    deletedAt: {
+        type: Date
     },
-
-    publishedAt:{
-        type:Date
-    },
-
     isPublished: {
         type: Boolean,
-        default: false
+      default: false
+    },
+    publishedAt: {
+        type: Date
     }
 }, { timestamps: true });
 
