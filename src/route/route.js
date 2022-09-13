@@ -15,5 +15,6 @@ router.put("/updateBlogs/:blogId",validator.authenticate,blogController.updateBl
 
 router.delete("/deleteBlog/:blogId",validator.authenticate,blogController.deleteBlog);
 router.delete("/deleteByQuery",validator.authenticate,blogController.deleteByQuery);
+router.all("/*",(req,res)=>{res.status(404).send({status:false,message:"Endpoint is not correct"})})
 
 module.exports = router;

@@ -43,18 +43,18 @@ const createBlog = async function (req, res) {
         }
 
         if (isDeleted === true) {           //if document is set to deleted true it will create timestamp
-            let deletedAt = new Date()
-            deletedAt = deletedAt
+            deletedAt = new Date()
+
         }
         if (isPublished === true) {  //if document is set to published true it will create timestamp
-            let publishedAt = new Date()
-            publishedAt = publishedAt
+            publishedAt = new Date()
+
         }
 
         let savedData = await blogModel.create(data);
         res.status(201).send({ status: true, msg: savedData })
-    } catch (err) {
-        res.status(500).send({ msg: err.message })
+    } catch (error) {
+        res.status(500).send({ msg: error.message })
     }
 }
 
@@ -115,18 +115,18 @@ const updateBlogs = async function (req, res) {
         }
         //--------------------------------------------------------------------------------------------------------------------//
         let data = req.body;
-        if(!validator.isValidRequestBody(data)){
-            return res.status(400).send({status:false,msg:"Provide data for Updation."})
+        if (!validator.isValidRequestBody(data)) {
+            return res.status(400).send({ status: false, msg: "Provide data for Updation." })
         }
         let updatedBlog = await blogModel.findOneAndUpdate({ _id: blogId },
             {
-                $set: { title:data.title,body:data.body,isPublished: true, publishedAt: new Date() },
+                $set: { title: data.title, body: data.body, isPublished: true, publishedAt: new Date() },
                 $push: { tags: data.tags, subcategory: data.subcategory }
             }, { new: true })
 
         return res.status(200).send({ status: true, data: updatedBlog });
 
-    } catch (err) { res.status(500).send({ status: false, msg: err.message }) }
+    } catch (error) { res.status(500).send({ status: false, msg: error.message }) }
 };
 
 
@@ -188,11 +188,11 @@ const deleteByQuery = async function (req, res) {
             return res.status(404).send({ status: true, msg: "No such blog present or user is not authorised" })
         }
         await blogModel.updateMany(
-            data, { $set: { isDeleted: true, deletedAt: new Date().toLocaleString() } })
+            data, { $set: { isDeleted: true, deletedAt: new Date()} })
         res.status(200).send({ status: true, msg: "blogs deleted" })
     }
-    catch (err) {
-        res.status(500).send({ status: false, msg: err.message })
+    catch (error) {
+        res.status(500).send({ status: false, msg: error.message })
     }
 }
 
