@@ -39,6 +39,10 @@ const createAuthor = async function (req, res) {
     if (!emailRegex.test(email)) {
       return res.status(400).send({ status: false, msg: "Invalid emailId" })
     }
+    const isEmailAlreadyUsed = await authorModel.findOne({ email });
+    if (isEmailAlreadyUsed) {
+      return res.status(400).send({ status: false, msg: 'Provided emailId is already registered' })
+    }
 
     if (!password) {
       return res.status(400).send({ status: false, msg: "password is required" });
@@ -59,14 +63,14 @@ const createAuthor = async function (req, res) {
 
 const loginAuthor = async function (req, res) {
   try {
-    let userName = req.body.email;
+    let emailId = req.body.email;
     let password = req.body.password;
 
-    let user = await authorModel.findOne({ email: userName, password: password });
-    if (!userName) {
+    let user = await authorModel.findOne({ email: emailId, password: password });
+    if (!emailId) {
       return res.status(401).send({
         status: false,
-        msg: "username is required",
+        msg: "emailId is required",
       });
     }
     if (!password) {
@@ -75,16 +79,16 @@ const loginAuthor = async function (req, res) {
         msg: "password is required",
       });
     }
-    if (!user)
+    if (!author)
       return res.status(401).send({
         status: false,
-        msg: "username or the password is not corerct",
+        msg: "emailId or the password is not corerct",
       });
 
 
     let token = jwt.sign(
       {
-        authorId: user._id.toString(),
+        authorId: author._id.toString(),
         Team: "Group 14",
         organisation: "FunctionUp",
       },
